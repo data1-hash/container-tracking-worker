@@ -1,35 +1,4 @@
 import { detectCaptcha, parseTrackingText, type CarrierRule, type WorkerTrackingResult } from '@voraco/shared';
 import { extractCarrierText } from './browser.js';
-import { assertSafeTrackingUrl } from './security.js';
-
-export interface TrackingRequest {
-  shipmentId: string;
-  trackingJobId: string;
-  carrier: string;
-  trackingNumber: string;
-  url: string;
-  rule: CarrierRule;
-}
-
-export async function track(req: TrackingRequest): Promise<WorkerTrackingResult> {
-  const safeUrl = assertSafeTrackingUrl(req.url);
-  if (req.rule.fetch_mode === 'MANUAL') return { success: false, manualReview: true, reason: 'Carrier rule is manual mode' };
-
-  let text = '';
-  if (req.rule.fetch_mode === 'URLFETCH') {
-    const response = await fetch(safeUrl, { redirect: 'follow' });
-    text = await response.text();
-  } else {
-    const result = await extractCarrierText(safeUrl, req.trackingNumber, req.rule);
-    if (result.blocked) return { success: false, manualReview: true, reason: 'CAPTCHA/login/human verification detected' };
-    text = result.text;
-  }
-
-  if (detectCaptcha(text, req.rule.captcha_keywords)) {
-    return { success: false, manualReview: true, reason: 'CAPTCHA/login/human verification detected' };
-  }
-
-  const data = parseTrackingText(text, req.rule);
-  if (data.confidence < 30) return { success: false, manualReview: true, reason: 'Parser confidence too low' };
-  return { success: true, manualReview: false, data };
-}
+export interface TrackingRequest { shipmentId: string; trackingJobId: string; carrier: string; trackingNumber: string; url: string; rule: CarrierRule }
+export async function track(req: TrackingRequest): Promise<WorkerTrackingResult> { if (req.rule.fetch_mode === 'MANUAL') return { success: false, manualReview: true, reason: 'Carrier rule is manual mode' }; let text = ''; if (req.rule.fetch_mode === 'URLFETCH') text = await (await fetch(req.url)).text(); else { const result = await extractCarrierText(req.url, req.trackingNumber, req.rule); if (result.blocked) return { success: false, manualReview: true, reason: 'CAPTCHA/login/human verification detected' }; text = result.text; } if (detectCaptcha(text, req.rule.captcha_keywords)) return { success: false, manualReview: true, reason: 'CAPTCHA/login/human verification detected' }; const data = parseTrackingText(text, req.rule); if (data.confidence < 30) return { success: false, manualReview: true, reason: 'Parser confidence too low' }; return { success: true, manualReview: false, data }; }
