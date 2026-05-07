@@ -1,0 +1,1 @@
+import type { ManualReview as Review } from '@voraco/shared'; import { ManualReviewPanel } from '../components/ManualReviewPanel'; export function ManualReview({ reviews }: { reviews: Review[] }) { return <ManualReviewPanel reviews={reviews}/>; }

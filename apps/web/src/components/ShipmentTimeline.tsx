@@ -1,0 +1,2 @@
+import type { ShipmentMilestone } from '@voraco/shared'; import { StatusBadge } from './StatusBadge';
+export function ShipmentTimeline({ items }: { items: ShipmentMilestone[] }) { return <div className="card"><h2 className="font-bold">Milestone Timeline</h2><div className="mt-4 space-y-3">{items.map((m)=><div key={m.id} className="flex items-center justify-between rounded-xl border p-3"><div><p className="font-semibold">{m.milestone_name}</p><p className="text-xs text-slate-500">Delay days: {m.delay_days ?? 0}</p></div><StatusBadge value={m.status}/></div>)}</div></div>; }

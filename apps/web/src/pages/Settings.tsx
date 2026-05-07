@@ -1,0 +1,1 @@
+export function Settings() { return <div className="card"><h2 className="font-bold">Settings</h2><div className="mt-4 grid gap-3 md:grid-cols-2"><input className="input" defaultValue="Worker mode: queue"/><input className="input" defaultValue="Batch limit: 10"/><input className="input" defaultValue="Alert ETA changes: enabled"/></div></div>; }

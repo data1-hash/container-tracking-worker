@@ -1,0 +1,1 @@
+import type { TrackingJob } from '@voraco/shared'; import { QueuePanel } from '../components/QueuePanel'; export function TrackingQueue({ jobs }: { jobs: TrackingJob[] }) { return <QueuePanel jobs={jobs}/>; }

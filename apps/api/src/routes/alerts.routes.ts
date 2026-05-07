@@ -1,0 +1,2 @@
+import { Router } from 'express'; import { listRows, updateRow } from '../services/crud.js';
+export const alertsRoutes = Router(); alertsRoutes.get('/', async (req,res)=>res.json(await listRows('alerts', req.query as Record<string,string>))); alertsRoutes.post('/:id/acknowledge', async (req,res)=>res.json(await updateRow('alerts', req.params.id, {status:'ACKNOWLEDGED'}))); alertsRoutes.post('/:id/close', async (req,res)=>res.json(await updateRow('alerts', req.params.id, {status:'CLOSED'})));
