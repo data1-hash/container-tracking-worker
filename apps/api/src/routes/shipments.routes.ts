@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { deleteRow, getRow, insertRow, listRows, updateRow } from '../services/crud.js';
+export const shipmentsRoutes = Router();
+shipmentsRoutes.get('/', async (req, res) => res.json(await listRows('shipments', req.query as Record<string,string>)));
+shipmentsRoutes.post('/', async (req, res) => res.status(201).json(await insertRow('shipments', req.body)));
+shipmentsRoutes.get('/:id', async (req, res) => res.json(await getRow('shipments', req.params.id)));
+shipmentsRoutes.put('/:id', async (req, res) => res.json(await updateRow('shipments', req.params.id, req.body)));
+shipmentsRoutes.delete('/:id', async (req, res) => res.json(await deleteRow('shipments', req.params.id)));
+shipmentsRoutes.post('/:id/enqueue-tracking', async (req, res) => res.status(201).json(await insertRow('tracking_jobs', { shipment_id: req.params.id, carrier: req.body.carrier, tracking_number: req.body.tracking_number, tracking_number_type: req.body.tracking_number_type ?? 'BL' })));
+shipmentsRoutes.get('/:id/timeline', async (req, res) => res.json(await listRows('shipment_milestones', { shipment_id: req.params.id })));
+shipmentsRoutes.get('/:id/events', async (req, res) => res.json(await listRows('tracking_events', { shipment_id: req.params.id })));
+shipmentsRoutes.get('/:id/documents', async (req, res) => res.json(await listRows('documents', { shipment_id: req.params.id })));
