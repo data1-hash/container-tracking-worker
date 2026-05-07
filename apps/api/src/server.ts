@@ -1,0 +1,32 @@
+import cors from 'cors';
+import express from 'express';
+import { config } from './config.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { requireAuth, requireRoles } from './middleware/requireAuth.js';
+import { alertsRoutes } from './routes/alerts.routes.js';
+import { carrierRulesRoutes } from './routes/carrierRules.routes.js';
+import { containersRoutes } from './routes/containers.routes.js';
+import { dashboardRoutes } from './routes/dashboard.routes.js';
+import { documentsRoutes } from './routes/documents.routes.js';
+import { healthRoutes } from './routes/health.routes.js';
+import { manualReviewsRoutes } from './routes/manualReviews.routes.js';
+import { milestonesRoutes } from './routes/milestones.routes.js';
+import { settingsRoutes } from './routes/settings.routes.js';
+import { shipmentsRoutes } from './routes/shipments.routes.js';
+import { trackingJobsRoutes } from './routes/trackingJobs.routes.js';
+
+export const app = express();
+app.use(cors({ origin: config.corsOrigin }));
+app.use(express.json({ limit: '2mb' }));
+app.use(healthRoutes);
+app.use('/api/dashboard', requireAuth, dashboardRoutes);
+app.use('/api/shipments', requireAuth, shipmentsRoutes);
+app.use('/api/carrier-rules', requireAuth, requireRoles('ADMIN', 'MANAGER', 'LOGISTICS'), carrierRulesRoutes);
+app.use('/api/tracking-jobs', requireAuth, requireRoles('ADMIN', 'MANAGER', 'LOGISTICS'), trackingJobsRoutes);
+app.use('/api/manual-reviews', requireAuth, requireRoles('ADMIN', 'MANAGER', 'LOGISTICS'), manualReviewsRoutes);
+app.use('/api/alerts', requireAuth, alertsRoutes);
+app.use('/api/settings', requireAuth, requireRoles('ADMIN', 'MANAGER'), settingsRoutes);
+app.use('/api', requireAuth, requireRoles('ADMIN', 'MANAGER', 'LOGISTICS'), containersRoutes, documentsRoutes, milestonesRoutes);
+app.use(errorHandler);
+
+if (process.env.NODE_ENV !== 'test') app.listen(config.port, () => console.log(`API listening on ${config.port}`));
