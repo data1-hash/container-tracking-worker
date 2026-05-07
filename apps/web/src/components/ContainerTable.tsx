@@ -1,0 +1,1 @@
+import type { Container } from '@voraco/shared'; export function ContainerTable({ containers }: { containers: Container[] }) { return <div className="card"><h2 className="font-bold">Containers</h2>{containers.map((c)=><div key={c.id} className="mt-3 rounded-xl border p-3"><b>{c.container_no}</b> · {c.container_type} · {c.current_status} · {c.current_location}</div>)}</div>; }

@@ -1,0 +1,2 @@
+import { Router } from 'express'; import { deleteRow, insertRow, updateRow } from '../services/crud.js';
+export const containersRoutes = Router(); containersRoutes.post('/shipments/:id/containers', async (req,res)=>res.status(201).json(await insertRow('containers',{...req.body, shipment_id:req.params.id}))); containersRoutes.put('/containers/:id', async (req,res)=>res.json(await updateRow('containers',req.params.id,req.body))); containersRoutes.delete('/containers/:id', async (req,res)=>res.json(await deleteRow('containers',req.params.id)));

@@ -1,0 +1,1 @@
+{"name":"worker","version":"0.1.0","type":"module","scripts":{"start":"tsx src/index.ts","run-once":"tsx src/index.ts run-once","run-loop":"tsx src/index.ts run-loop","build":"tsc -p tsconfig.json"},"dependencies":{"@supabase/supabase-js":"^2.49.4","@voraco/shared":"workspace:*","playwright":"^1.52.0"},"devDependencies":{"typescript":"^5.8.3","tsx":"^4.19.4"}}

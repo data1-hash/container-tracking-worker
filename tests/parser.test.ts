@@ -1,0 +1,4 @@
+import { describe, expect, it } from 'vitest';
+import { parseTrackingText } from '@voraco/shared';
+const rules = { status_regex: 'Status:\\s*(.+)', eta_regex: 'ETA:\\s*([0-9-]+)', vessel_regex: 'Vessel:\\s*(.+)', location_regex: 'Location:\\s*(.+)' };
+describe('parseTrackingText', () => { it('extracts status', () => expect(parseTrackingText('Status: In Transit', rules).status).toBe('In Transit')); it('extracts ETA', () => expect(parseTrackingText('ETA: 2026-06-10', rules).eta).toBe('2026-06-10')); it('extracts vessel', () => expect(parseTrackingText('Vessel: Ocean Star', rules).vessel).toBe('Ocean Star')); it('extracts location', () => expect(parseTrackingText('Location: Singapore', rules).location).toBe('Singapore')); it('returns blank when no match', () => expect(parseTrackingText('No fields here', rules).status).toBeUndefined()); });
