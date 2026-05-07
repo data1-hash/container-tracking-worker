@@ -1,27 +1,68 @@
 # AGENTS.md
 
 ## Project
-This repository is a container / BL tracking worker.
 
-It uses:
-- Node.js
-- Playwright
-- Google Sheets API
-- GitHub Actions
-- Google Sheets as the database
+This is a full-stack Import/Export Shipment Tracking App.
+
+Core stack:
+- React + Vite + TypeScript + Tailwind frontend
+- Node.js + Express + TypeScript backend
+- Supabase PostgreSQL database
+- Supabase Auth
+- Supabase Storage
+- Node.js + Playwright tracking worker
+- pnpm monorepo
+
+## Important Architecture
+
+Do not use Google Sheets.
+Do not use Google Apps Script.
+
+Supabase PostgreSQL is the main database.
+
+The worker uses Playwright to open carrier websites and extract visible tracking text.
 
 ## Safety Rules
+
 - Never bypass CAPTCHA.
-- Never use stealth, CAPTCHA solving, proxy rotation, or anti-bot evasion.
-- If CAPTCHA, login wall, or human verification is detected, move the job to Manual_Review.
-- Never commit secrets, service account JSON, tokens, or real customer data.
-- Never log full credentials.
-- Use mock data for tests.
+- Never use CAPTCHA solving services.
+- Never use stealth plugins.
+- Never use proxy rotation for anti-bot evasion.
+- If CAPTCHA/login/human verification appears, create a Manual Review item.
+- Do not commit secrets.
+- Do not commit real shipment/customer data.
+- Use mock data in tests.
 
 ## Commands
-Run these before final answer:
 
-```bash
-npm install
-npm test
-npm run lint
+Use pnpm.
+
+Install:
+pnpm install
+
+Run frontend:
+pnpm dev:web
+
+Run backend:
+pnpm dev:api
+
+Run worker:
+pnpm dev:worker
+
+Lint:
+pnpm lint
+
+Test:
+pnpm test
+
+Build:
+pnpm build
+
+## Before Final Response
+
+Always run:
+pnpm lint
+pnpm test
+pnpm build
+
+If any command fails, explain the issue and make the smallest safe fix.
