@@ -1,0 +1,24 @@
+{
+  "name": "container-tracking-worker",
+  "version": "1.0.0",
+  "description": "GitHub Actions worker for BL/container tracking with Google Sheets and Playwright.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "lint": "eslint .",
+    "track": "node src/index.js",
+    "track:mock": "MOCK_MODE=true node src/index.js"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0",
+    "playwright": "^1.49.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "vitest": "^4.1.5"
+  }
+}
