@@ -1,2 +1,109 @@
-import { useEffect, useState } from 'react'; import type { Alert, CarrierRule, Container, DashboardSummary, DocumentRecord, ManualReview as Review, Shipment, ShipmentMilestone, TrackingEvent, TrackingJob } from '@voraco/shared'; import { Layout } from './components/Layout'; import { api } from './lib/api'; import { Alerts } from './pages/Alerts'; import { CarrierRules } from './pages/CarrierRules'; import { Dashboard } from './pages/Dashboard'; import { ExportShipments } from './pages/ExportShipments'; import { ImportShipments } from './pages/ImportShipments'; import { ManualReview } from './pages/ManualReview'; import { Settings } from './pages/Settings'; import { ShipmentDetail } from './pages/ShipmentDetail'; import { Shipments } from './pages/Shipments'; import { TrackingQueue } from './pages/TrackingQueue';
-export default function App() { const [page,setPage]=useState('Dashboard'); const [selected,setSelected]=useState('s-import'); const [summary,setSummary]=useState<DashboardSummary>({totalActive:0,imports:0,exports:0,delayed:0,arrivingThisWeek:0,manualReviews:0,pendingJobs:0,criticalAlerts:0}); const [shipments,setShipments]=useState<Shipment[]>([]); const [containers,setContainers]=useState<Container[]>([]); const [milestones,setMilestones]=useState<ShipmentMilestone[]>([]); const [documents,setDocuments]=useState<DocumentRecord[]>([]); const [events,setEvents]=useState<TrackingEvent[]>([]); const [reviews,setReviews]=useState<Review[]>([]); const [jobs,setJobs]=useState<TrackingJob[]>([]); const [alerts,setAlerts]=useState<Alert[]>([]); const [rules,setRules]=useState<CarrierRule[]>([]); useEffect(()=>{ void Promise.all([api.summary(),api.shipments(),api.containers(),api.milestones(),api.documents(),api.events(),api.reviews(),api.jobs(),api.alerts(),api.carrierRules()]).then(([a,b,c,d,e,f,g,h,i,j])=>{setSummary(a);setShipments(b);setContainers(c);setMilestones(d);setDocuments(e);setEvents(f);setReviews(g);setJobs(h);setAlerts(i);setRules(j);}); },[]); const open=(id:string)=>{ setSelected(id); setPage('Shipment Detail'); }; const shipment=shipments.find((s)=>s.id===selected) ?? shipments[0]; return <Layout page={page} setPage={setPage}>{page==='Dashboard'&&<Dashboard summary={summary}/>} {page==='Shipments'&&<Shipments shipments={shipments} onOpen={open}/>} {page==='Imports'&&<ImportShipments shipments={shipments} onOpen={open}/>} {page==='Exports'&&<ExportShipments shipments={shipments} onOpen={open}/>} {page==='Shipment Detail'&&shipment&&<ShipmentDetail shipment={shipment} containers={containers.filter((c)=>c.shipment_id===shipment.id)} milestones={milestones.filter((m)=>m.shipment_id===shipment.id)} documents={documents.filter((d)=>d.shipment_id===shipment.id)} events={events.filter((e)=>e.shipment_id===shipment.id)} alerts={alerts.filter((a)=>a.shipment_id===shipment.id)} reviews={reviews.filter((r)=>r.shipment_id===shipment.id)}/>} {page==='Manual Review'&&<ManualReview reviews={reviews}/>} {page==='Carrier Rules'&&<CarrierRules rules={rules}/>} {page==='Tracking Queue'&&<TrackingQueue jobs={jobs}/>} {page==='Alerts'&&<Alerts alerts={alerts}/>} {page==='Settings'&&<Settings/>}</Layout>; }
+import { useEffect, useState } from 'react';
+import type {
+  Alert,
+  CarrierRule,
+  Container,
+  DashboardSummary,
+  DocumentRecord,
+  ManualReview as Review,
+  Shipment,
+  ShipmentMilestone,
+  TrackingEvent,
+  TrackingJob,
+} from '@voraco/shared';
+import { Layout } from './components/Layout';
+import { api } from './lib/api';
+import { Alerts } from './pages/Alerts';
+import { CarrierRules } from './pages/CarrierRules';
+import { Dashboard } from './pages/Dashboard';
+import { ExceptionQueue } from './pages/ExceptionQueue';
+import { ExportShipments } from './pages/ExportShipments';
+import { ImportShipments } from './pages/ImportShipments';
+import { ManualReview } from './pages/ManualReview';
+import { Settings } from './pages/Settings';
+import { ShipmentDetail } from './pages/ShipmentDetail';
+import { Shipments } from './pages/Shipments';
+import { TrackingQueue } from './pages/TrackingQueue';
+
+export default function App() {
+  const [page, setPage] = useState('Exception Queue');
+  const [selected, setSelected] = useState('s-import');
+  const [summary, setSummary] = useState<DashboardSummary>({
+    totalActive: 0,
+    imports: 0,
+    exports: 0,
+    delayed: 0,
+    arrivingThisWeek: 0,
+    manualReviews: 0,
+    pendingJobs: 0,
+    criticalAlerts: 0,
+  });
+  const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [containers, setContainers] = useState<Container[]>([]);
+  const [milestones, setMilestones] = useState<ShipmentMilestone[]>([]);
+  const [documents, setDocuments] = useState<DocumentRecord[]>([]);
+  const [events, setEvents] = useState<TrackingEvent[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [jobs, setJobs] = useState<TrackingJob[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [rules, setRules] = useState<CarrierRule[]>([]);
+
+  useEffect(() => {
+    void Promise.all([
+      api.summary(),
+      api.shipments(),
+      api.containers(),
+      api.milestones(),
+      api.documents(),
+      api.events(),
+      api.reviews(),
+      api.jobs(),
+      api.alerts(),
+      api.carrierRules(),
+    ]).then(([a, b, c, d, e, f, g, h, i, j]) => {
+      setSummary(a);
+      setShipments(b);
+      setContainers(c);
+      setMilestones(d);
+      setDocuments(e);
+      setEvents(f);
+      setReviews(g);
+      setJobs(h);
+      setAlerts(i);
+      setRules(j);
+    });
+  }, []);
+
+  const open = (id: string) => {
+    setSelected(id);
+    setPage('Shipment Detail');
+  };
+
+  const shipment = shipments.find((s) => s.id === selected) ?? shipments[0];
+
+  return (
+    <Layout page={page} setPage={setPage}>
+      {page === 'Exception Queue' && <ExceptionQueue />}
+      {page === 'Dashboard' && <Dashboard summary={summary} />}
+      {page === 'Shipments' && <Shipments shipments={shipments} onOpen={open} />}
+      {page === 'Imports' && <ImportShipments shipments={shipments} onOpen={open} />}
+      {page === 'Exports' && <ExportShipments shipments={shipments} onOpen={open} />}
+      {page === 'Shipment Detail' && shipment && (
+        <ShipmentDetail
+          shipment={shipment}
+          containers={containers.filter((c) => c.shipment_id === shipment.id)}
+          milestones={milestones.filter((m) => m.shipment_id === shipment.id)}
+          documents={documents.filter((d) => d.shipment_id === shipment.id)}
+          events={events.filter((e) => e.shipment_id === shipment.id)}
+          alerts={alerts.filter((a) => a.shipment_id === shipment.id)}
+          reviews={reviews.filter((r) => r.shipment_id === shipment.id)}
+        />
+      )}
+      {page === 'Manual Review' && <ManualReview reviews={reviews} />}
+      {page === 'Carrier Rules' && <CarrierRules rules={rules} />}
+      {page === 'Tracking Queue' && <TrackingQueue jobs={jobs} />}
+      {page === 'Alerts' && <Alerts alerts={alerts} />}
+      {page === 'Settings' && <Settings />}
+    </Layout>
+  );
+}
