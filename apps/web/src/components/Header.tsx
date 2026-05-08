@@ -13,7 +13,7 @@ const subtitles: Record<string, string> = {
 
 export function Header({ page }: { page: string }) {
   return (
-    <header className="sticky top-0 z-20 border-b border-blue-300/10 bg-slate-950/72 px-4 py-4 backdrop-blur-xl lg:px-7">
+    <header className="sticky top-0 z-20 border-b border-blue-300/10 bg-slate-950/75 px-4 py-4 backdrop-blur-xl lg:px-7">
       <div className="flex items-center justify-end gap-4">
         <div className="mr-auto lg:hidden">
           <h1 className="text-xl font-black text-white">{page}</h1>
