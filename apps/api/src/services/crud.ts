@@ -30,7 +30,7 @@ function sanitizeBody(name: string, body: unknown) {
   );
 }
 
-function sanitizeFilters(name: string, query?: Record<string, string>) {
+export function sanitizeFilters(name: string, query?: Record<string, string>) {
   assertKnownTable(name);
   return Object.entries(query ?? {}).filter(([key, value]) => allowedFilters[name].includes(key) && value !== undefined && value !== '');
 }
