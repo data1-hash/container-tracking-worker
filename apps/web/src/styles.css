@@ -16,7 +16,7 @@
   }
 
   .queue-panel {
-    @apply rounded-lg border border-slate-700/70 bg-slate-900/72 shadow-2xl shadow-black/20 backdrop-blur;
+    @apply rounded-lg border border-slate-700/70 bg-slate-900/75 shadow-2xl shadow-black/20 backdrop-blur;
   }
 
   .queue-card {
