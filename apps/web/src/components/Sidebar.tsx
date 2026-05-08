@@ -1,46 +1,123 @@
-const links = [
-  ['Dashboard', '⌁'],
-  ['Shipments', '▦'],
-  ['Imports', '↓'],
-  ['Exports', '↑'],
-  ['Manual Review', '!'],
-  ['Carrier Rules', '⚙'],
-  ['Tracking Queue', '↻'],
-  ['Alerts', '◆'],
-  ['Settings', '☷'],
+import {
+  AlertCircle,
+  BellRing,
+  CheckCircle2,
+  CircleAlert,
+  ClipboardList,
+  FileText,
+  Home,
+  Search,
+  Settings,
+  Ship,
+  TimerReset,
+  UploadCloud,
+  XCircle,
+} from 'lucide-react';
+
+const primaryLinks = [
+  { label: 'Exception Queue', icon: BellRing },
+  { label: 'Dashboard', icon: Home },
 ] as const;
+
+const shipmentLinks = [
+  { label: 'Shipments', display: 'All Shipments', count: '12,842', icon: ClipboardList },
+  { label: 'Tracking Queue', display: 'Auto Tracked', count: '9,215', icon: CheckCircle2 },
+  { label: 'Manual Review', display: 'CAPTCHA Required', count: '312', icon: AlertCircle, tone: 'amber' },
+  { label: 'Alerts', display: 'Failed Tracking', count: '487', icon: XCircle, tone: 'red' },
+  { label: 'Carrier Rules', display: 'Manual ETA Pending', count: '256', icon: CircleAlert, tone: 'violet' },
+  { label: 'Exports', display: 'Critical Delay', count: '128', icon: TimerReset, tone: 'red' },
+  { label: 'Imports', display: 'Near Arrival', count: '184', icon: Ship, tone: 'cyan' },
+] as const;
+
+const toolLinks = [
+  { label: 'Shipments', display: 'Search Shipments', icon: Search },
+  { label: 'Manual Review', display: 'Bulk Capture', icon: UploadCloud },
+  { label: 'Dashboard', display: 'Reports', icon: FileText },
+  { label: 'Settings', display: 'Settings', icon: Settings },
+] as const;
+
+const toneClasses = {
+  amber: 'text-amber-300 bg-amber-500/16',
+  red: 'text-red-300 bg-red-500/16',
+  violet: 'text-violet-300 bg-violet-500/16',
+  cyan: 'text-cyan-300 bg-cyan-500/16',
+  default: 'text-slate-300 bg-slate-700/50',
+} as const;
+
+function NavButton({
+  label,
+  display = label,
+  icon: Icon,
+  count,
+  tone = 'default',
+  page,
+  setPage,
+}: {
+  label: string;
+  display?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  count?: string;
+  tone?: keyof typeof toneClasses;
+  page: string;
+  setPage: (page: string) => void;
+}) {
+  const active = page === label || (label === 'Exception Queue' && page === 'Manual Review');
+
+  return (
+    <button
+      onClick={() => setPage(label)}
+      className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-semibold transition ${
+        active ? 'border border-blue-400/60 bg-blue-500/20 text-blue-200 shadow-lg shadow-blue-950/30' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+      }`}
+    >
+      <Icon className={`h-5 w-5 ${active ? 'text-blue-300' : toneClasses[tone].split(' ')[0]}`} />
+      <span className="min-w-0 flex-1 truncate">{display}</span>
+      {count && <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${toneClasses[tone]}`}>{count}</span>}
+    </button>
+  );
+}
 
 export function Sidebar({ page, setPage }: { page: string; setPage: (page: string) => void }) {
   return (
-    <aside className="hidden w-80 shrink-0 p-5 lg:block">
-      <div className="sticky top-5 rounded-[2rem] border border-white/10 bg-slate-950/85 p-5 text-white shadow-2xl shadow-slate-950/30 backdrop-blur">
-        <div className="flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-blue-600 text-xl font-black">V</div>
+    <aside className="hidden w-80 shrink-0 border-r border-blue-300/15 bg-slate-950/72 p-4 text-white lg:block">
+      <div className="sticky top-4 flex h-[calc(100vh-2rem)] flex-col">
+        <div className="mb-7 flex items-center gap-3 px-2">
+          <div className="grid h-12 w-12 grid-cols-3 grid-rows-3 gap-0.5 text-blue-400">
+            {Array.from({ length: 9 }).map((_, index) => <span key={index} className="rounded-sm border border-blue-500/80 bg-blue-500/10" />)}
+          </div>
           <div>
-            <div className="text-lg font-black tracking-tight">Voraco</div>
-            <p className="text-xs font-medium text-slate-400">Shipment Command Center</p>
+            <div className="text-2xl font-black leading-none text-white">Container<span className="text-blue-400">Ops</span></div>
+            <p className="mt-1 text-xs font-bold uppercase text-slate-400">Control Tower</p>
           </div>
         </div>
 
-        <div className="mt-6 rounded-3xl border border-blue-400/20 bg-blue-500/10 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.22em] text-blue-200">Mode</p>
-          <p className="mt-2 text-sm text-slate-200">Mock-safe demo workspace. No real carrier calls from UI.</p>
-        </div>
-
-        <nav className="mt-6 space-y-1.5">
-          {links.map(([link, icon]) => (
-            <button
-              key={link}
-              onClick={() => setPage(link)}
-              className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition ${
-                page === link ? 'bg-white text-slate-950 shadow-lg shadow-black/20' : 'text-slate-300 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-white/10 text-xs">{icon}</span>
-              {link}
-            </button>
-          ))}
+        <nav className="space-y-1">
+          {primaryLinks.map((link) => <NavButton key={link.label} {...link} page={page} setPage={setPage} />)}
         </nav>
+
+        <p className="mb-2 mt-7 px-3 text-xs font-bold uppercase text-slate-400">Shipments</p>
+        <nav className="space-y-1">
+          {shipmentLinks.map((link) => <NavButton key={link.display} {...link} page={page} setPage={setPage} />)}
+        </nav>
+
+        <p className="mb-2 mt-7 px-3 text-xs font-bold uppercase text-slate-400">Tools</p>
+        <nav className="space-y-1">
+          {toolLinks.map((link) => <NavButton key={link.display} {...link} page={page} setPage={setPage} />)}
+        </nav>
+
+        <div className="mt-auto rounded-lg border border-slate-700/80 bg-slate-900/75 p-4 shadow-xl shadow-black/20">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex gap-3">
+              <span className="mt-1 grid h-5 w-5 place-items-center rounded-full bg-emerald-500/18"><span className="h-2.5 w-2.5 rounded-full bg-emerald-400" /></span>
+              <div>
+                <p className="font-black text-white">System Status</p>
+                <p className="mt-2 text-sm text-slate-300">All systems operational</p>
+              </div>
+            </div>
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-emerald-500 text-white"><CheckCircle2 className="h-5 w-5" /></span>
+          </div>
+          <button className="mt-4 text-sm font-bold text-blue-300">View system health -></button>
+        </div>
       </div>
     </aside>
   );
